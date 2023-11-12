@@ -76,11 +76,21 @@ def abbreviate(labels, rfill=' '):
     return abbrev
 
 
-def box_text(text, width, offset=0):
+def box_text(text, width, title_align, offset=0 ):
     """
     Return text inside an ascii textbox
     """
-    box = " " * offset + "-" * (width+2) + "\n"
-    box += " " * offset + "|" + text.center(width) + "|" + "\n"
-    box += " " * offset + "-" * (width+2)
+    
+    aligned_text = text.center(width)
+    if title_align == "center":
+        aligned_text = text.center(width)
+    elif title_align == "left":
+        aligned_text = text.ljust(width)
+    elif title_align == "right":
+        aligned_text = text.rjust(width)
+    
+    
+    box = " " * offset + "+" + "-" * (width) + "+" + "\n"
+    box += " " * offset + "|" + aligned_text + "|" + "\n"
+    box += " " * offset +  "+" + "-" * (width) + "+" 
     return box
