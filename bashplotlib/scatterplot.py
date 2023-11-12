@@ -28,14 +28,20 @@ def get_scale(series, is_y=False, steps=20):
     return scaled_series
 
 
-def _plot_scatter(xs, ys, size, pch, colour, title, cs, title_align):
+def _plot_scatter(xs, ys, size, pch, colour, title, cs, title_align, ytitle, xtitle):
     plotted = set()
-
+     
     if title:
         print(box_text(title, 2 * (len(get_scale(xs, False, size)) + 1), title_align))
 
+    if ytitle:
+        print("Y:" + ytitle)
+
     print("-" * (2 * (len(get_scale(xs, False, size)) + 2)))
+    
+    
     for y in get_scale(ys, True, size):
+       
         print("|", end=' ')
         for x in get_scale(xs, False, size):
             point = " "
@@ -47,9 +53,12 @@ def _plot_scatter(xs, ys, size, pch, colour, title, cs, title_align):
                         colour = cs[i]
             printcolour(point + " ", True, colour)
         print(" |")
+   
     print("-" * (2 * (len(get_scale(xs, False, size)) + 2)))
+    if xtitle:
+        print("X:" + xtitle)
 
-def plot_scatter(f, xs, ys, size, pch, colour, title, title_align):
+def plot_scatter(f, xs, ys, size, pch, colour, title, title_align, ytitle, xtitle):
     """
     Form a complex number.
 
@@ -61,6 +70,9 @@ def plot_scatter(f, xs, ys, size, pch, colour, title, title_align):
         pch -- shape of the points (any character)
         colour -- colour of the points
         title -- title of the plot
+        title-align -- alignment of the title
+        ytitle -- title for y axis
+        xtitle --  title for x axis
     """
     cs = None
     if f:
@@ -81,7 +93,7 @@ def plot_scatter(f, xs, ys, size, pch, colour, title, title_align):
         with open(ys) as fh:
             ys = [float(str(row).strip()) for row in fh]
 
-    _plot_scatter(xs, ys, size, pch, colour, title, cs, title_align)
+    _plot_scatter(xs, ys, size, pch, colour, title, cs, title_align, ytitle, xtitle)
     
 
 
@@ -91,12 +103,17 @@ def main():
 
     parser.add_option('-f', '--file', help='a csv w/ x and y coordinates', default=None, dest='f')
     parser.add_option('-t', '--title', help='title for the chart', default="", dest='t')
+    parser.add_option('-ta', '--title-align', help='alignment for the title', default="center", dest='ta')
     parser.add_option('-x', help='x coordinates', default=None, dest='x')
     parser.add_option('-y', help='y coordinates', default=None, dest='y')
     parser.add_option('-s', '--size', help='y coordinates', default=20, dest='size', type='int')
     parser.add_option('-p', '--pch', help='shape of point', default="x", dest='pch')
     parser.add_option('-c', '--colour', help='colour of the plot (%s)' %
                       colour_help, default='default', dest='colour')
+    parser.add_option('-Y', '--y-title', help='Y axis title', default="", dest='Y')
+    parser.add_option('-X', '--x-title', help='X axis title', default="", dest='X')
+    
+    
 
     opts, args = parser.parse_args()
 
@@ -104,7 +121,7 @@ def main():
         opts.f = sys.stdin.readlines()
 
     if opts.f or (opts.x and opts.y):
-        plot_scatter(opts.f, opts.x, opts.y, opts.size, opts.pch, opts.colour, opts.t)
+        plot_scatter(opts.f, opts.x, opts.y, opts.size, opts.pch, opts.colour, opts.t, opts.ta, opts.Y, opts.X)
     else:
         print("nothing to plot!")
 
